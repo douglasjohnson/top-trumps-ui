@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react';
-import { default as axios } from 'axios';
 import Deck from '../types/Deck';
 import DeckEdit from './DeckEdit';
 import PersistedDeck from '../types/PersistedDeck';
 import DeckGrid from './DeckGrid';
 import { ConfirmationDialog } from './ConfirmationDialog';
+import Http from '../service/Http';
 
 function DeckAdmin() {
   const [decks, setDecks] = useState<PersistedDeck[]>();
@@ -44,8 +44,7 @@ function DeckAdmin() {
   };
 
   useEffect(() => {
-    axios
-      .get<PersistedDeck[]>('/decks')
+    Http.get<PersistedDeck[]>('/decks')
       .then((response) => {
         setDecks(response.data);
       })
@@ -63,9 +62,9 @@ function DeckAdmin() {
       deck={deckToEdit}
       onUpdate={(updatedDeck) => {
         if (editDeck) {
-          axios.patch<PersistedDeck>(`/decks/${editDeck.id}`, updatedDeck).then((response) => onDeckUpdated(response.data));
+          Http.patch<PersistedDeck>(`/decks/${editDeck.id}`, updatedDeck).then((response) => onDeckUpdated(response.data));
         } else {
-          axios.post<PersistedDeck>('/decks', updatedDeck).then((response) => onDeckCreated(response.data));
+          Http.post<PersistedDeck>('/decks', updatedDeck).then((response) => onDeckCreated(response.data));
         }
       }}
       onCancel={() => {
@@ -82,7 +81,7 @@ function DeckAdmin() {
           open={!!deleteDeck}
           title="Delete deck"
           text={`Are you sure you want to delete deck '${deleteDeck?.name}'?`}
-          onConfirm={() => deleteDeck && axios.delete(`/decks/${deleteDeck.id}`).then(() => onDeckDeleted(deleteDeck))}
+          onConfirm={() => deleteDeck && Http.delete(`/decks/${deleteDeck.id}`).then(() => onDeckDeleted(deleteDeck))}
           onClose={() => setDeleteDeck(undefined)}
         />
       </>

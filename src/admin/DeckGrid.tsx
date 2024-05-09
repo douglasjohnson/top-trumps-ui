@@ -13,11 +13,12 @@ interface DeckGridProps {
 function DeckGrid({ decks, onDeckEdit, onDeckAdd, onDeckDelete }: DeckGridProps) {
   return (
     <Grid container spacing={2}>
-      {decks.map((deck) => (
-        <Grid item key={deck.id}>
-          <DeckCard deck={deck} onClick={() => onDeckEdit(deck)} onDelete={() => onDeckDelete(deck)} />
-        </Grid>
-      ))}
+      {decks &&
+        decks.map((deck) => (
+          <Grid item key={deck.id}>
+            <DeckCard deck={deck} onClick={() => onDeckEdit(deck)} onDelete={() => onDeckDelete(deck)} />
+          </Grid>
+        ))}
       <Grid item>
         <NewCard onClick={onDeckAdd} />
       </Grid>

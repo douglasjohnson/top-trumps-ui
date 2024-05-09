@@ -6,7 +6,7 @@ import { Card, CardMedia, Stack } from '@mui/material';
 
 function App() {
   return (
-    <BrowserRouter basename="/vite-react-ts">
+    <BrowserRouter>
       <Routes>
         <Route
           index

@@ -23,7 +23,7 @@ jobs:
         with:
           context: .
           push: true
-          tags: douglasjohnson/vite-react-ts:latest
+          tags: douglasjohnson/top-trumps-ui:latest
       - uses: google-github-actions/auth@v2
         with:
           credentials_json: '${{ secrets.GOOGLE_CREDENTIALS }}'

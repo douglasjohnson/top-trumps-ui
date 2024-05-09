@@ -1,16 +1,16 @@
-import { default as axios } from 'axios';
 import PersistedDeck from '../types/PersistedDeck';
 import { useEffect, useState } from 'react';
 import { DeckCard } from './DeckCard';
 import { Grid } from '@mui/material';
 import GameBoard from './GameBoard';
+import Http from '../service/Http';
 
 export function Game() {
   const [decks, setDecks] = useState<PersistedDeck[]>();
   const [selectedDeck, setSelectedDeck] = useState<PersistedDeck>();
 
   useEffect(() => {
-    axios.get<PersistedDeck[]>('/decks').then((response) => setDecks(response.data));
+    Http.get<PersistedDeck[]>('/decks').then((response) => setDecks(response.data));
   }, []);
 
   return selectedDeck ? (

@@ -1,18 +1,18 @@
 apiVersion: serving.knative.dev/v1
 kind: Service
 metadata:
-  name: vite-react-ts
+  name: top-trumps
   labels:
-    cloud.googleapis.com/location: us-central1
+    cloud.googleapis.com/location: europe-west1
     run.googleapis.com/startupProbeType: Default
   annotations:
-    run.googleapis.com/container-dependencies: '{"vite-react-ts":["spring-boot-open-api-mongodb"]}'
+    run.googleapis.com/container-dependencies: '{"top-trumps-ui":["top-trumps-api"]}'
 spec:
   template:
     spec:
       containers:
-      - name: vite-react-ts
-        image: douglasjohnson/vite-react-ts:latest
+      - name: top-trumps-ui
+        image: douglasjohnson/top-trumps-ui:latest
         env:
         - name: API_URL
           value: http://localhost:5000
@@ -24,8 +24,8 @@ spec:
           failureThreshold: 1
           tcpSocket:
             port: 8080
-      - name: spring-boot-open-api-mongodb
-        image: douglasjohnson/spring-boot-open-api-mongodb:latest
+      - name: top-trumps-api
+        image: douglasjohnson/top-trumps-api:latest
         env:
           - name: spring.data.mongodb.uri
             valueFrom:
