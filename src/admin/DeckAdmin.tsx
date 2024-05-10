@@ -21,7 +21,9 @@ function DeckAdmin() {
 
   useEffect(() => {
     findAll()
-      .then((decks) => dispatch({ type: 'DECKS_LOAD_SUCCESS', decks }))
+      .then((decks) => {
+        dispatch({ type: 'DECKS_LOAD_SUCCESS', decks });
+      })
       .catch((error) => {
         console.log(error);
       });
