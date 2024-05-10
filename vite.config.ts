@@ -10,7 +10,7 @@ export default defineConfig({
     globals: true,
     setupFiles: './src/test-setup.ts',
     coverage: {
-      include: ['src/*.ts{x,}'],
+      include: ['src/**/*.ts{x,}'],
       exclude: ['src/main.tsx'],
       thresholds: {
         100: true,

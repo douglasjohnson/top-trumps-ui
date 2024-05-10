@@ -1,88 +1,53 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useReducer } from 'react';
 import Deck from '../types/Deck';
 import DeckEdit from './DeckEdit';
-import PersistedDeck from '../types/PersistedDeck';
 import DeckGrid from './DeckGrid';
-import { ConfirmationDialog } from './ConfirmationDialog';
-import Http from '../service/Http';
+import DeleteDeckConfirmationDialog from './DeleteDeckConfirmationDialog';
+import { DeckAdminReducer } from './DeckAdminReducer';
+import { deleteDeck, findAll, save, update } from '../service/DeckService';
 
 function DeckAdmin() {
-  const [decks, setDecks] = useState<PersistedDeck[]>();
-  const [editDeck, setEditDeck] = useState<PersistedDeck>();
-  const [newDeck, setNewDeck] = useState<Deck>();
-  const [deleteDeck, setDeleteDeck] = useState<PersistedDeck>();
+  const [state, dispatch] = useReducer(DeckAdminReducer, {});
 
-  const onDeckAdd = () => {
-    setNewDeck({
-      name: '',
-      imageUrl: '',
-      cards: [],
-      attributes: [],
-    });
-  };
-  const onDeckCreated = (value: PersistedDeck) => {
-    if (decks) {
-      setDecks([...decks, value]);
+  const onUpdateConfirm = (updatedDeck: Deck) => {
+    if (state.editDeck) {
+      update({ ...updatedDeck, id: state.editDeck.id }).then((deck) => dispatch({ type: 'DECK_UPDATED', deck }));
+    } else {
+      save(updatedDeck).then((deck) => dispatch({ type: 'DECK_CREATED', deck }));
     }
-    setNewDeck(undefined);
   };
 
-  const onDeckEdit = (value: PersistedDeck) => setEditDeck(value);
-  const onDeckUpdated = (value: PersistedDeck) => {
-    if (decks) {
-      setDecks(decks.map((existingDeck) => (value.id === existingDeck.id ? value : existingDeck)));
-    }
-    setEditDeck(undefined);
-  };
-
-  const onDeckDelete = (value: PersistedDeck) => setDeleteDeck(value);
-  const onDeckDeleted = (value: PersistedDeck) => {
-    if (decks) {
-      setDecks(decks.filter((existingDeck) => existingDeck !== value));
-    }
-    setDeleteDeck(undefined);
-  };
+  const onDeleteConfirm = () => state.deleteDeck && deleteDeck(state.deleteDeck).then((deck) => dispatch({ type: 'DECK_DELETED', deck }));
 
   useEffect(() => {
-    Http.get<PersistedDeck[]>('/decks')
-      .then((response) => {
-        setDecks(response.data);
-      })
+    findAll()
+      .then((decks) => dispatch({ type: 'DECKS_LOAD_SUCCESS', decks }))
       .catch((error) => {
         console.log(error);
-      })
-      .finally(() => {
-        // always executed
       });
   }, []);
 
-  const deckToEdit = newDeck || editDeck;
-  return deckToEdit ? (
+  const editDeck = state.newDeck || state.editDeck;
+  return editDeck ? (
     <DeckEdit
-      deck={deckToEdit}
-      onUpdate={(updatedDeck) => {
-        if (editDeck) {
-          Http.patch<PersistedDeck>(`/decks/${editDeck.id}`, updatedDeck).then((response) => onDeckUpdated(response.data));
-        } else {
-          Http.post<PersistedDeck>('/decks', updatedDeck).then((response) => onDeckCreated(response.data));
-        }
-      }}
-      onCancel={() => {
-        setEditDeck(undefined);
-        setNewDeck(undefined);
-      }}
-      confirmText={newDeck ? 'Save' : 'Update'}
+      deck={editDeck}
+      onConfirm={onUpdateConfirm}
+      onCancel={() => dispatch({ type: 'EDIT_DECK_CANCELLED' })}
+      confirmText={state.newDeck ? 'Save' : 'Update'}
     />
   ) : (
-    decks && (
+    state.decks && (
       <>
-        <DeckGrid decks={decks} onDeckEdit={onDeckEdit} onDeckAdd={onDeckAdd} onDeckDelete={onDeckDelete} />
-        <ConfirmationDialog
-          open={!!deleteDeck}
-          title="Delete deck"
-          text={`Are you sure you want to delete deck '${deleteDeck?.name}'?`}
-          onConfirm={() => deleteDeck && Http.delete(`/decks/${deleteDeck.id}`).then(() => onDeckDeleted(deleteDeck))}
-          onClose={() => setDeleteDeck(undefined)}
+        <DeckGrid
+          decks={state.decks}
+          onDeckEdit={(value) => dispatch({ type: 'EDIT_DECK', deck: value })}
+          onDeckAdd={() => dispatch({ type: 'NEW_DECK' })}
+          onDeckDelete={(value) => dispatch({ type: 'DELETE_DECK', deck: value })}
+        />
+        <DeleteDeckConfirmationDialog
+          deck={state.deleteDeck}
+          onConfirm={onDeleteConfirm}
+          onClose={() => dispatch({ type: 'DELETE_DECK_CANCELLED' })}
         />
       </>
     )

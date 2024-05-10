@@ -11,12 +11,12 @@ import EditCardDialog from './EditCardDialog';
 
 interface DeckEditProps {
   deck: Deck;
-  onUpdate: (deck: Deck) => void;
+  onConfirm: (deck: Deck) => void;
   onCancel: () => void;
   confirmText: string;
 }
 
-function DeckEdit({ deck, onUpdate, onCancel, confirmText }: DeckEditProps) {
+function DeckEdit({ deck, onConfirm, onCancel, confirmText }: DeckEditProps) {
   const [updatedDeck, setUpdatedDeck] = useState(deck);
   const [addCard, setAddCard] = useState(false);
   const [editCard, setEditCard] = useState<Card>();
@@ -78,9 +78,12 @@ function DeckEdit({ deck, onUpdate, onCancel, confirmText }: DeckEditProps) {
           ))}
           <ListItem>
             <ListItemButton
-              onClick={() => {
-                setUpdatedDeck({ ...updatedDeck, attributes: [...updatedDeck.attributes, { name: '', units: '' }] });
-              }}
+              onClick={() =>
+                setUpdatedDeck({
+                  ...updatedDeck,
+                  attributes: [...updatedDeck.attributes, { name: '', units: '' }],
+                })
+              }
             >
               <AddRoundedIcon />
             </ListItemButton>
@@ -90,7 +93,7 @@ function DeckEdit({ deck, onUpdate, onCancel, confirmText }: DeckEditProps) {
           <Button variant="outlined" onClick={onCancel}>
             Cancel
           </Button>
-          <Button variant="contained" onClick={() => onUpdate(updatedDeck)}>
+          <Button variant="contained" onClick={() => onConfirm(updatedDeck)}>
             {confirmText}
           </Button>
         </Stack>
