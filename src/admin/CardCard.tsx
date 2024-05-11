@@ -34,7 +34,7 @@ export default function CardCard({ card, onClick, onDelete }: CardCardProps) {
           </IconButton>
         }
       />
-      <CardActionArea onClick={onClick}>
+      <CardActionArea aria-label="edit" onClick={onClick}>
         <CardMedia component="img" height="240" image={card.imageUrl} />
         <CardContent>
           <List dense disablePadding>

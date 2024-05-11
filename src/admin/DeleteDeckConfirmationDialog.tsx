@@ -1,4 +1,4 @@
-import { ConfirmationDialog } from './ConfirmationDialog';
+import ConfirmationDialog from './ConfirmationDialog';
 import PersistedDeck from '../types/PersistedDeck';
 
 interface DeleteDeckConfirmationDialogProps {

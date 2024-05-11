@@ -10,7 +10,7 @@ interface DeckGridProps {
   onDeckDelete: (deck: PersistedDeck) => void;
 }
 
-function DeckGrid({ decks, onDeckEdit, onDeckAdd, onDeckDelete }: DeckGridProps) {
+export default function DeckGrid({ decks, onDeckEdit, onDeckAdd, onDeckDelete }: DeckGridProps) {
   return (
     <Grid container spacing={2}>
       {decks &&
@@ -25,5 +25,3 @@ function DeckGrid({ decks, onDeckEdit, onDeckAdd, onDeckDelete }: DeckGridProps)
     </Grid>
   );
 }
-
-export default DeckGrid;

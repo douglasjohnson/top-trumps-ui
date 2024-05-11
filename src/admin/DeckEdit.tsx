@@ -16,7 +16,7 @@ interface DeckEditProps {
   confirmText: string;
 }
 
-function DeckEdit({ deck, onConfirm, onCancel, confirmText }: DeckEditProps) {
+export default function DeckEdit({ deck, onConfirm, onCancel, confirmText }: DeckEditProps) {
   const [updatedDeck, setUpdatedDeck] = useState(deck);
   const [addCard, setAddCard] = useState(false);
   const [editCard, setEditCard] = useState<Card>();
@@ -141,5 +141,3 @@ function DeckEdit({ deck, onConfirm, onCancel, confirmText }: DeckEditProps) {
     </div>
   );
 }
-
-export default DeckEdit;

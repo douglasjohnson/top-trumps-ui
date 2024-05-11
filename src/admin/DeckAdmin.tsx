@@ -3,10 +3,10 @@ import Deck from '../types/Deck';
 import DeckEdit from './DeckEdit';
 import DeckGrid from './DeckGrid';
 import DeleteDeckConfirmationDialog from './DeleteDeckConfirmationDialog';
-import { DeckAdminReducer } from './DeckAdminReducer';
+import DeckAdminReducer from './DeckAdminReducer';
 import { deleteDeck, findAll, save, update } from '../service/DeckService';
 
-function DeckAdmin() {
+export default function DeckAdmin() {
   const [state, dispatch] = useReducer(DeckAdminReducer, {});
 
   const onUpdateConfirm = (updatedDeck: Deck) => {
@@ -21,12 +21,8 @@ function DeckAdmin() {
 
   useEffect(() => {
     findAll()
-      .then((decks) => {
-        dispatch({ type: 'DECKS_LOAD_SUCCESS', decks });
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+      .then((decks) => dispatch({ type: 'DECKS_LOAD_SUCCESS', decks }))
+      .catch((error) => console.log(error));
   }, []);
 
   const editDeck = state.newDeck || state.editDeck;
@@ -55,5 +51,3 @@ function DeckAdmin() {
     )
   );
 }
-
-export default DeckAdmin;

@@ -11,14 +11,10 @@ export default function NewCard({ onClick }: NewCardProps) {
       raised
       sx={{
         width: 200,
+        height: 360,
       }}
     >
-      <CardActionArea
-        onClick={onClick}
-        sx={{
-          height: 320,
-        }}
-      >
+      <CardActionArea aria-label="create" onClick={onClick}>
         <AddRoundedIcon />
       </CardActionArea>
     </Card>

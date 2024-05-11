@@ -31,7 +31,7 @@ export default function DeckCard({ deck, onClick, onDelete }: DeckCardProps) {
           </IconButton>
         }
       />
-      <CardActionArea onClick={onClick}>
+      <CardActionArea aria-label="edit" onClick={onClick}>
         <CardMedia component="img" height="240" image={deck.imageUrl} />
       </CardActionArea>
     </Card>

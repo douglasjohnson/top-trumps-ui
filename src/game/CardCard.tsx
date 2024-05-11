@@ -7,7 +7,7 @@ interface CardCardProps {
   onClick: (attribute: Attribute) => void;
 }
 
-export function CardCard({ card, onClick }: CardCardProps) {
+export default function CardCard({ card, onClick }: CardCardProps) {
   return (
     <MuiCard
       raised

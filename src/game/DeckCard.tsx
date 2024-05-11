@@ -6,7 +6,7 @@ interface DeckCardProps {
   onClick: () => void;
 }
 
-export function DeckCard({ deck, onClick }: DeckCardProps) {
+export default function DeckCard({ deck, onClick }: DeckCardProps) {
   return (
     <Card
       raised

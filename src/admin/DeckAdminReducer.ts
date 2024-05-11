@@ -18,7 +18,7 @@ type Action =
   | { type: 'DECK_UPDATED'; deck: PersistedDeck }
   | { type: 'DECK_DELETED'; deck: PersistedDeck };
 
-export const DeckAdminReducer = (state: State, action: Action) => {
+const DeckAdminReducer = (state: State, action: Action) => {
   const newState = { ...state };
   switch (action.type) {
     case 'DECKS_LOAD_SUCCESS':
@@ -69,3 +69,5 @@ export const DeckAdminReducer = (state: State, action: Action) => {
   }
   return newState;
 };
+
+export default DeckAdminReducer;
