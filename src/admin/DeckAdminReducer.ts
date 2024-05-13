@@ -46,24 +46,24 @@ const DeckAdminReducer = (state: State, action: Action) => {
       newState.deleteDeck = undefined;
       break;
     case 'DECK_CREATED': {
-      if (state.decks) {
-        newState.decks = [...state.decks, action.deck];
+      if (newState.decks) {
+        newState.decks = [...newState.decks, action.deck];
       }
       newState.newDeck = undefined;
       break;
     }
     case 'DECK_UPDATED': {
-      if (state.decks) {
-        state.decks = state.decks.map((existingDeck) => (action.deck.id === existingDeck.id ? action.deck : existingDeck));
+      if (newState.decks) {
+        newState.decks = newState.decks.map((existingDeck) => (action.deck.id === existingDeck.id ? action.deck : existingDeck));
       }
-      state.editDeck = undefined;
+      newState.editDeck = undefined;
       break;
     }
     case 'DECK_DELETED': {
-      if (state.decks) {
-        state.decks = state.decks.filter((existingDeck) => existingDeck !== action.deck);
+      if (newState.decks) {
+        newState.decks = newState.decks.filter((existingDeck) => existingDeck !== action.deck);
       }
-      state.deleteDeck = undefined;
+      newState.deleteDeck = undefined;
       break;
     }
   }

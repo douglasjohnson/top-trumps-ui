@@ -126,18 +126,15 @@ export default function DeckEdit({ deck, onConfirm, onCancel, confirmText }: Dec
           setAddCard(false);
         }}
       />
-      {editCard && (
-        <EditCardDialog
-          attributes={updatedDeck.attributes}
-          card={editCard}
-          open={true}
-          onClose={() => setEditCard(undefined)}
-          onConfirm={(card) => {
-            setUpdatedDeck({ ...updatedDeck, cards: updatedDeck.cards.map((existingCard) => (existingCard === editCard ? card : existingCard)) });
-            setEditCard(undefined);
-          }}
-        />
-      )}
+      <EditCardDialog
+        attributes={updatedDeck.attributes}
+        card={editCard}
+        onClose={() => setEditCard(undefined)}
+        onConfirm={(card) => {
+          setUpdatedDeck({ ...updatedDeck, cards: updatedDeck.cards.map((existingCard) => (existingCard === editCard ? card : existingCard)) });
+          setEditCard(undefined);
+        }}
+      />
     </div>
   );
 }

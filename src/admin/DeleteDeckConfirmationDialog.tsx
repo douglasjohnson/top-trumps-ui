@@ -11,7 +11,7 @@ export default function DeleteDeckConfirmationDialog({ deck, onConfirm, onClose 
   return (
     deck && (
       <ConfirmationDialog
-        open={!!deck}
+        open
         title="Delete deck"
         text={`Are you sure you want to delete deck '${deck.name}'?`}
         onConfirm={onConfirm}
