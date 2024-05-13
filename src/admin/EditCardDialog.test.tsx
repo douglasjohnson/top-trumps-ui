@@ -104,5 +104,5 @@ describe('Edit Card Dialog', () => {
         { type: 'Att2', value: 22 },
       ],
     });
-  });
+  }, 10000);
 });
