@@ -2,10 +2,13 @@ import { render, screen, within } from '@testing-library/react';
 import DeckEdit from './DeckEdit';
 import userEvent, { UserEvent } from '@testing-library/user-event';
 import Deck from '../types/Deck';
+import Card from '../types/Card';
 
 const input = (name: string) => screen.getByRole('textbox', { name });
 const nameInput = () => input('Name');
 const imageInput = () => input('Image');
+
+const attributeListItem = (index = 0) => screen.getAllByRole('textbox', { name: 'Attribute Name' })[index].closest('li') as HTMLLIElement;
 
 describe('Deck Edit', () => {
   let user: UserEvent;
@@ -55,7 +58,6 @@ describe('Deck Edit', () => {
     });
   });
   describe('attributes', () => {
-    const attributeListItem = (index = 0) => screen.getAllByRole('textbox', { name: 'Attribute Name' })[index].closest('li') as HTMLLIElement;
     beforeEach(() => {
       deck.attributes = [
         { name: 'Att1', units: 'a' },
@@ -227,6 +229,90 @@ describe('Deck Edit', () => {
 
       expect(screen.queryByText('Card 1')).not.toBeInTheDocument();
       expect(screen.getByText('Card 2')).toBeInTheDocument();
+    });
+  });
+  describe('card attributes', () => {
+    let card: Card;
+    beforeEach(() => {
+      card = {
+        name: 'Card 1',
+        description: 'Card 1 description',
+        imageUrl: 'http://imageurl1',
+        attributes: [
+          {
+            type: 'Att1',
+            value: 1,
+          },
+          { type: 'Att2', value: 2 },
+        ],
+      };
+      deck.attributes = [
+        { name: 'Att1', units: 'a' },
+        { name: 'Att2', units: 'b' },
+      ];
+      deck.cards = [card];
+
+      render(<DeckEdit deck={deck} onConfirm={onConfirm} onCancel={onCancel} confirmText="Update" />);
+    });
+    it('should update cards when attribute name changed', async () => {
+      await user.type(screen.getAllByRole('textbox', { name: 'Attribute Name' })[0], ' edited');
+      await user.click(screen.getByRole('button', { name: 'Update' }));
+
+      expect(onConfirm).toHaveBeenCalledWith({
+        ...deck,
+        attributes: [
+          { name: 'Att1 edited', units: 'a' },
+          { name: 'Att2', units: 'b' },
+        ],
+        cards: [
+          {
+            ...card,
+            attributes: [
+              {
+                type: 'Att1 edited',
+                value: 1,
+              },
+              { type: 'Att2', value: 2 },
+            ],
+          },
+        ],
+      });
+    });
+    it('should update cards when attribute added', async () => {
+      await user.click(screen.getByRole('button', { name: 'New attribute' }));
+
+      const newAttributeListItem = attributeListItem(2);
+      await user.type(within(newAttributeListItem).getByRole('textbox', { name: 'Attribute Name' }), 'Att3');
+      await user.type(within(newAttributeListItem).getByRole('textbox', { name: 'Attribute Units' }), 'c');
+
+      await user.click(screen.getByRole('button', { name: 'Update' }));
+
+      expect(onConfirm).toHaveBeenCalledWith({
+        ...deck,
+        attributes: [...deck.attributes, { name: 'Att3', units: 'c' }],
+        cards: [
+          {
+            ...card,
+            attributes: [...card.attributes, { type: 'Att3', value: 0 }],
+          },
+        ],
+      });
+    });
+    it('should update cards when attribute removed', async () => {
+      await user.click(within(attributeListItem()).getByRole('button', { name: 'delete attribute' }));
+
+      await user.click(screen.getByRole('button', { name: 'Update' }));
+
+      expect(onConfirm).toHaveBeenCalledWith({
+        ...deck,
+        attributes: [{ name: 'Att2', units: 'b' }],
+        cards: [
+          {
+            ...card,
+            attributes: [{ type: 'Att2', value: 2 }],
+          },
+        ],
+      });
     });
   });
 });

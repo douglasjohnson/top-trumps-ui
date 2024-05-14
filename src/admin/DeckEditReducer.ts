@@ -21,7 +21,7 @@ type Action =
   | { type: 'UPDATE_ATTRIBUTE_UNITS'; attribute: AttributeType; units: string };
 
 const DeckEditReducer = (state: State, action: Action) => {
-  const newState = { ...state };
+  const newState = { ...state, deck: { ...state.deck } };
   switch (action.type) {
     case 'UPDATE_DECK_NAME':
       newState.deck.name = action.name;
@@ -31,9 +31,17 @@ const DeckEditReducer = (state: State, action: Action) => {
       break;
     case 'DELETE_ATTRIBUTE':
       newState.deck.attributes = newState.deck.attributes.filter((value) => value !== action.attribute);
+      newState.deck.cards = newState.deck.cards.map((deckCard) => ({
+        ...deckCard,
+        attributes: deckCard.attributes.filter((cardAttribute) => cardAttribute.type !== action.attribute.name),
+      }));
       break;
     case 'NEW_ATTRIBUTE':
       newState.deck.attributes = [...newState.deck.attributes, { name: '', units: '' }];
+      newState.deck.cards = newState.deck.cards.map((deckCard) => ({
+        ...deckCard,
+        attributes: [...deckCard.attributes, { type: '', value: 0 }],
+      }));
       break;
     case 'EDIT_CARD':
       newState.editCard = action.card;
