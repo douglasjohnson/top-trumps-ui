@@ -56,7 +56,7 @@ export default function DeckEdit({ deck, onConfirm, onCancel, confirmText }: Dec
           ))}
           <ListItem>
             <ListItemButton aria-label="New attribute" onClick={() => dispatch({ type: 'NEW_ATTRIBUTE' })}>
-              <AddRoundedIcon />
+              <AddRoundedIcon fontSize="large" />
             </ListItemButton>
           </ListItem>
         </List>

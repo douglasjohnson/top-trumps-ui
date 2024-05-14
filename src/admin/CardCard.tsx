@@ -24,7 +24,7 @@ export default function CardCard({ card, onClick, onDelete }: CardCardProps) {
         }}
         action={
           <IconButton
-            aria-label="delete"
+            aria-label="delete card"
             onClick={(event) => {
               event.stopPropagation();
               onDelete();
@@ -34,7 +34,7 @@ export default function CardCard({ card, onClick, onDelete }: CardCardProps) {
           </IconButton>
         }
       />
-      <CardActionArea aria-label="edit" onClick={onClick}>
+      <CardActionArea aria-label="edit card" onClick={onClick}>
         <CardMedia component="img" height="240" image={card.imageUrl} />
         <CardContent>
           <List dense disablePadding>

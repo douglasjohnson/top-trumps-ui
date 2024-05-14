@@ -87,21 +87,21 @@ describe('Deck Admin', () => {
       render(<DeckAdmin />);
       await screen.findByText('Deck 1');
     });
-    it('should show new deck on create click', async () => {
-      await user.click(screen.getByRole('button', { name: 'create' }));
+    it('should show new deck on new click', async () => {
+      await user.click(screen.getByRole('button', { name: 'new' }));
 
       expect(screen.getByRole('textbox', { name: 'Name' })).toBeInTheDocument();
       expect(screen.getByRole('textbox', { name: 'Name' })).toHaveValue('');
     });
     it('should show all decks on cancel', async () => {
-      await user.click(screen.getByRole('button', { name: 'create' }));
+      await user.click(screen.getByRole('button', { name: 'new' }));
 
       await user.click(screen.getByRole('button', { name: 'Cancel' }));
 
       expect(screen.getByText('Deck 1')).toBeInTheDocument();
     });
     it('should save deck on confirm', async () => {
-      await user.click(screen.getByRole('button', { name: 'create' }));
+      await user.click(screen.getByRole('button', { name: 'new' }));
 
       await user.type(screen.getByRole('textbox', { name: 'Name' }), 'New Deck');
       await user.click(screen.getByRole('button', { name: 'Save' }));
@@ -110,7 +110,7 @@ describe('Deck Admin', () => {
     });
     it('should update decks on save success', async () => {
       mockedSave.mockResolvedValue({ id: '2', name: 'New Deck', imageUrl: '', attributes: [], cards: [] });
-      await user.click(screen.getByRole('button', { name: 'create' }));
+      await user.click(screen.getByRole('button', { name: 'new' }));
 
       await user.type(screen.getByRole('textbox', { name: 'Name' }), 'New Deck');
       await user.click(screen.getByRole('button', { name: 'Save' }));

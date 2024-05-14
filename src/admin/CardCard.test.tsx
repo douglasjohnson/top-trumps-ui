@@ -30,13 +30,13 @@ describe('Card Card', () => {
   it('should call onClick when card is clicked', async () => {
     render(<CardCard card={card} onClick={onClick} onDelete={onDelete} />);
 
-    await user.click(screen.getByRole('button', { name: 'edit' }));
+    await user.click(screen.getByRole('button', { name: 'edit card' }));
     expect(onClick).toHaveBeenCalled();
   });
   it('should call onDelete when delete is clicked', async () => {
     render(<CardCard card={card} onClick={onClick} onDelete={onDelete} />);
 
-    await user.click(screen.getByRole('button', { name: 'delete' }));
+    await user.click(screen.getByRole('button', { name: 'delete card' }));
 
     expect(onDelete).toHaveBeenCalled();
   });

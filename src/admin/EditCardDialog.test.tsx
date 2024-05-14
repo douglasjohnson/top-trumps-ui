@@ -37,6 +37,13 @@ describe('Edit Card Dialog', () => {
 
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
   });
+  it('should be displayed when card is updated to be defined', () => {
+    const { rerender } = render(<EditCardDialog card={undefined} onConfirm={onConfirm} onClose={onClose} attributes={[]} />);
+
+    rerender(<EditCardDialog card={card} onConfirm={onConfirm} onClose={onClose} attributes={[]} />);
+
+    expect(screen.getByRole('dialog')).toBeInTheDocument();
+  });
   it('should have input for name', () => {
     render(<EditCardDialog card={card} onConfirm={onConfirm} onClose={onClose} attributes={[]} />);
 
@@ -52,7 +59,7 @@ describe('Edit Card Dialog', () => {
 
     expect(imageInput()).toHaveValue('http://imageurl');
   });
-  it('should have input for each attribute url', () => {
+  it('should have input for each attribute', () => {
     render(
       <EditCardDialog
         card={card}

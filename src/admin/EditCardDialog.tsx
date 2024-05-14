@@ -1,6 +1,6 @@
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, InputAdornment, Stack, TextField } from '@mui/material';
 import Card from '../types/Card';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import AttributeType from '../types/AttributeType';
 
 interface EditCardDialogProps {
@@ -12,6 +12,10 @@ interface EditCardDialogProps {
 
 export default function EditCardDialog({ card, onClose, onConfirm, attributes }: EditCardDialogProps) {
   const [updatedCard, setUpdatedCard] = useState(card);
+
+  useEffect(() => {
+    setUpdatedCard(card);
+  }, [card]);
 
   const attributeUnits = (name: string) => attributes.find((attribute) => attribute.name === name)?.units;
 
