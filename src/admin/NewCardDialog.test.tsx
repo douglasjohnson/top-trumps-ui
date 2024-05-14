@@ -93,5 +93,5 @@ describe('New Card Dialog', () => {
         { type: 'Att2', value: 2 },
       ],
     });
-  }, 10000);
+  });
 });
