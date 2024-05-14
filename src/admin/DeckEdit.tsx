@@ -37,7 +37,7 @@ export default function DeckEdit({ deck, onConfirm, onCancel, confirmText }: Dec
             <ListItem
               key={index}
               secondaryAction={
-                <IconButton edge="end" aria-label="delete" onClick={() => dispatch({ type: 'DELETE_ATTRIBUTE', attribute })}>
+                <IconButton edge="end" aria-label="delete attribute" onClick={() => dispatch({ type: 'DELETE_ATTRIBUTE', attribute })}>
                   <DeleteIcon />
                 </IconButton>
               }
@@ -55,7 +55,7 @@ export default function DeckEdit({ deck, onConfirm, onCancel, confirmText }: Dec
             </ListItem>
           ))}
           <ListItem>
-            <ListItemButton onClick={() => dispatch({ type: 'NEW_ATTRIBUTE' })}>
+            <ListItemButton aria-label="New attribute" onClick={() => dispatch({ type: 'NEW_ATTRIBUTE' })}>
               <AddRoundedIcon />
             </ListItemButton>
           </ListItem>

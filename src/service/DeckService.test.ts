@@ -1,6 +1,7 @@
 import { deleteDeck, findAll, save, update } from './DeckService';
 import Http from './Http';
 import PersistedDeck from '../types/PersistedDeck';
+import Deck from '../types/Deck';
 
 vitest.mock('./Http');
 
@@ -29,14 +30,15 @@ describe('Deck Service', () => {
   });
   describe('save', () => {
     const mockedHttpPost = vitest.mocked(Http.post);
-    const deck = {
-      name: 'Deck 1',
-      imageUrl: 'http://imageurl',
-      attributes: [],
-      cards: [],
-    };
+    let deck: Deck;
     beforeEach(() => {
       mockedHttpPost.mockImplementation(() => new Promise(vi.fn()));
+      deck = {
+        name: 'Deck 1',
+        imageUrl: 'http://imageurl',
+        attributes: [],
+        cards: [],
+      };
     });
     it('should POST deck', () => {
       save(deck);
@@ -57,15 +59,16 @@ describe('Deck Service', () => {
   });
   describe('update', () => {
     const mockedHttpPatch = vitest.mocked(Http.patch);
-    const deck = {
-      id: '1',
-      name: 'Deck 1',
-      imageUrl: 'http://imageurl',
-      attributes: [],
-      cards: [],
-    };
+    let deck: PersistedDeck;
     beforeEach(() => {
       mockedHttpPatch.mockImplementation(() => new Promise(vi.fn()));
+      deck = {
+        id: '1',
+        name: 'Deck 1',
+        imageUrl: 'http://imageurl',
+        attributes: [],
+        cards: [],
+      };
     });
     it('should PATCH deck', () => {
       update(deck);
@@ -86,15 +89,16 @@ describe('Deck Service', () => {
   });
   describe('delete', () => {
     const mockedHttpDelete = vitest.mocked(Http.delete);
-    const deck = {
-      id: '1',
-      name: 'Deck 1',
-      imageUrl: 'http://imageurl',
-      attributes: [],
-      cards: [],
-    };
+    let deck: PersistedDeck;
     beforeEach(() => {
       mockedHttpDelete.mockImplementation(() => new Promise(vi.fn()));
+      deck = {
+        id: '1',
+        name: 'Deck 1',
+        imageUrl: 'http://imageurl',
+        attributes: [],
+        cards: [],
+      };
     });
     it('should DELETE deck', () => {
       deleteDeck(deck);

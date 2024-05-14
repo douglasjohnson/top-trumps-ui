@@ -120,9 +120,10 @@ describe('Deck Admin', () => {
   });
   describe('delete', () => {
     const mockedDelete = vitest.mocked(deleteDeck);
-    const deck = { id: '1', name: 'Deck 1', imageUrl: '', attributes: [], cards: [] };
+    let deck: PersistedDeck;
     beforeEach(async () => {
       mockedDelete.mockImplementation(() => new Promise(vi.fn()));
+      deck = { id: '1', name: 'Deck 1', imageUrl: '', attributes: [], cards: [] };
       mockedFindAll.mockResolvedValueOnce([deck]);
       render(<DeckAdmin />);
       await screen.findByText('Deck 1');
