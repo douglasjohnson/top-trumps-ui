@@ -1,10 +1,10 @@
 import PersistedDeck from '../types/PersistedDeck';
 import { useEffect, useState } from 'react';
 import Card from '../types/Card';
-import { DeckCard } from './DeckCard';
+import DeckCard from './DeckCard';
 import { Grid, IconButton, Typography } from '@mui/material';
 import SportsKabaddiIcon from '@mui/icons-material/SportsKabaddi';
-import { CardCard } from './CardCard';
+import CardCard from './CardCard';
 import Attribute from '../types/Attribute';
 
 interface GameBoardProps {
@@ -25,7 +25,7 @@ const shuffle = (array: Card[]) => {
   }
 };
 
-function GameBoard({ deck }: GameBoardProps) {
+export default function GameBoard({ deck }: GameBoardProps) {
   const [cards1, setCards1] = useState<Card[]>();
   const [cards2, setCards2] = useState<Card[]>();
   const [game, setGame] = useState<{ player1: boolean; player2: boolean; winner: string | undefined }>({
@@ -137,5 +137,3 @@ function GameBoard({ deck }: GameBoardProps) {
     </Grid>
   );
 }
-
-export default GameBoard;

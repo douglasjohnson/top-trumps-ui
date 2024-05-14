@@ -8,7 +8,7 @@ interface ConfirmationDialogProps {
   onClose: () => void;
 }
 
-export function ConfirmationDialog({ open, title, text, onConfirm, onClose }: ConfirmationDialogProps) {
+export default function ConfirmationDialog({ open, title, text, onConfirm, onClose }: ConfirmationDialogProps) {
   return (
     <Dialog open={open} onClose={onClose} aria-labelledby="confirmation-dialog-title" aria-describedby="confirmation-dialog-description">
       <DialogTitle id="confirmation-dialog-title">{title}</DialogTitle>

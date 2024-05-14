@@ -1,88 +1,62 @@
 import Deck from '../types/Deck';
-import { useState } from 'react';
+import { useReducer } from 'react';
 import { Button, Grid, IconButton, List, ListItem, ListItemButton, Stack, TextField } from '@mui/material';
 import NewCard from './NewCard';
 import NewCardDialog from './NewCardDialog';
 import CardCard from './CardCard';
 import DeleteIcon from '@mui/icons-material/Delete';
 import AddRoundedIcon from '@mui/icons-material/AddRounded';
-import Card from '../types/Card';
 import EditCardDialog from './EditCardDialog';
+import DeckEditReducer from './DeckEditReducer';
 
 interface DeckEditProps {
   deck: Deck;
-  onUpdate: (deck: Deck) => void;
+  onConfirm: (deck: Deck) => void;
   onCancel: () => void;
   confirmText: string;
 }
 
-function DeckEdit({ deck, onUpdate, onCancel, confirmText }: DeckEditProps) {
-  const [updatedDeck, setUpdatedDeck] = useState(deck);
-  const [addCard, setAddCard] = useState(false);
-  const [editCard, setEditCard] = useState<Card>();
+export default function DeckEdit({ deck, onConfirm, onCancel, confirmText }: DeckEditProps) {
+  const [state, dispatch] = useReducer(DeckEditReducer, { deck, addCard: false });
+
+  const updatedDeck = state.deck;
+  const addCard = state.addCard;
+  const editCard = state.editCard;
 
   return (
     <div>
       <Stack spacing={2}>
-        <TextField label="Name" value={updatedDeck.name} onChange={(event) => setUpdatedDeck({ ...deck, name: event.target.value })} />
-        <TextField label="Image" value={updatedDeck.imageUrl} onChange={(event) => setUpdatedDeck({ ...deck, imageUrl: event.target.value })} />
+        <TextField label="Name" value={updatedDeck.name} onChange={(event) => dispatch({ type: 'UPDATE_DECK_NAME', name: event.target.value })} />
+        <TextField
+          label="Image"
+          value={updatedDeck.imageUrl}
+          onChange={(event) => dispatch({ type: 'UPDATE_DECK_IMAGE_URL', imageUrl: event.target.value })}
+        />
         <List>
           {updatedDeck.attributes.map((attribute, index) => (
             <ListItem
               key={index}
               secondaryAction={
-                <IconButton
-                  edge="end"
-                  aria-label="delete"
-                  onClick={() => {
-                    const attributes = updatedDeck.attributes.filter((value) => value.name !== attribute.name);
-                    setUpdatedDeck({
-                      ...updatedDeck,
-                      attributes,
-                    });
-                  }}
-                >
+                <IconButton edge="end" aria-label="delete attribute" onClick={() => dispatch({ type: 'DELETE_ATTRIBUTE', attribute })}>
                   <DeleteIcon />
                 </IconButton>
               }
             >
               <TextField
+                label="Attribute Name"
                 value={attribute.name}
-                onChange={(event) =>
-                  setUpdatedDeck({
-                    ...updatedDeck,
-                    attributes: updatedDeck.attributes.map((deckAttribute) =>
-                      deckAttribute.name === attribute.name ? { ...deckAttribute, name: event.target.value } : deckAttribute,
-                    ),
-                    cards: updatedDeck.cards.map((deckCard) => ({
-                      ...deckCard,
-                      attributes: deckCard.attributes.map((cardAttribute) =>
-                        cardAttribute.type === attribute.name ? { ...cardAttribute, type: event.target.value } : cardAttribute,
-                      ),
-                    })),
-                  })
-                }
+                onChange={(event) => dispatch({ type: 'UPDATE_ATTRIBUTE_NAME', attribute, name: event.target.value })}
               />
               <TextField
+                label="Attribute Units"
                 value={attribute.units}
-                onChange={(event) =>
-                  setUpdatedDeck({
-                    ...updatedDeck,
-                    attributes: updatedDeck.attributes.map((deckAttribute) =>
-                      deckAttribute.name === attribute.name ? { ...deckAttribute, units: event.target.value } : deckAttribute,
-                    ),
-                  })
-                }
+                onChange={(event) => dispatch({ type: 'UPDATE_ATTRIBUTE_UNITS', attribute, units: event.target.value })}
               />
             </ListItem>
           ))}
           <ListItem>
-            <ListItemButton
-              onClick={() => {
-                setUpdatedDeck({ ...updatedDeck, attributes: [...updatedDeck.attributes, { name: '', units: '' }] });
-              }}
-            >
-              <AddRoundedIcon />
+            <ListItemButton aria-label="New attribute" onClick={() => dispatch({ type: 'NEW_ATTRIBUTE' })}>
+              <AddRoundedIcon fontSize="large" />
             </ListItemButton>
           </ListItem>
         </List>
@@ -90,7 +64,7 @@ function DeckEdit({ deck, onUpdate, onCancel, confirmText }: DeckEditProps) {
           <Button variant="outlined" onClick={onCancel}>
             Cancel
           </Button>
-          <Button variant="contained" onClick={() => onUpdate(updatedDeck)}>
+          <Button variant="contained" onClick={() => onConfirm(updatedDeck)}>
             {confirmText}
           </Button>
         </Stack>
@@ -98,45 +72,25 @@ function DeckEdit({ deck, onUpdate, onCancel, confirmText }: DeckEditProps) {
       <Grid container spacing={2}>
         {updatedDeck.cards.map((card) => (
           <Grid key={card.name} item>
-            <CardCard
-              card={card}
-              onClick={() => setEditCard(card)}
-              onDelete={() =>
-                setUpdatedDeck({
-                  ...updatedDeck,
-                  cards: updatedDeck.cards.filter((existingCard) => existingCard !== card),
-                })
-              }
-            />
+            <CardCard card={card} onClick={() => dispatch({ type: 'EDIT_CARD', card })} onDelete={() => dispatch({ type: 'DELETE_CARD', card })} />
           </Grid>
         ))}
         <Grid item>
-          <NewCard onClick={() => setAddCard(true)} />
+          <NewCard onClick={() => dispatch({ type: 'ADD_CARD', value: true })} />
         </Grid>
       </Grid>
       <NewCardDialog
         attributes={updatedDeck.attributes}
         open={addCard}
-        onClose={() => setAddCard(false)}
-        onConfirm={(card) => {
-          setUpdatedDeck({ ...updatedDeck, cards: [...updatedDeck.cards, card] });
-          setAddCard(false);
-        }}
+        onClose={() => dispatch({ type: 'ADD_CARD', value: false })}
+        onConfirm={(card) => dispatch({ type: 'CARD_ADDED', card })}
       />
-      {editCard && (
-        <EditCardDialog
-          attributes={updatedDeck.attributes}
-          card={editCard}
-          open={true}
-          onClose={() => setEditCard(undefined)}
-          onConfirm={(card) => {
-            setUpdatedDeck({ ...updatedDeck, cards: updatedDeck.cards.map((existingCard) => (existingCard === editCard ? card : existingCard)) });
-            setEditCard(undefined);
-          }}
-        />
-      )}
+      <EditCardDialog
+        attributes={updatedDeck.attributes}
+        card={editCard}
+        onClose={() => dispatch({ type: 'EDIT_CARD', card: undefined })}
+        onConfirm={(card) => dispatch({ type: 'CARD_EDITED', card })}
+      />
     </div>
   );
 }
-
-export default DeckEdit;

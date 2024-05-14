@@ -1,10 +1,10 @@
 import './App.css';
 import DeckAdmin from './admin/DeckAdmin';
 import { BrowserRouter, Link, Route, Routes } from 'react-router-dom';
-import { Game } from './game/Game';
+import Game from './game/Game';
 import { Card, CardMedia, Stack } from '@mui/material';
 
-function App() {
+export default function App() {
   return (
     <BrowserRouter>
       <Routes>
@@ -40,5 +40,3 @@ function App() {
     </BrowserRouter>
   );
 }
-
-export default App;

@@ -14,12 +14,13 @@ export default function NewCard({ onClick }: NewCardProps) {
       }}
     >
       <CardActionArea
+        aria-label="new"
         onClick={onClick}
         sx={{
-          height: 320,
+          height: 360,
         }}
       >
-        <AddRoundedIcon />
+        <AddRoundedIcon fontSize="large" />
       </CardActionArea>
     </Card>
   );

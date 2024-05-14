@@ -1,16 +1,16 @@
 import PersistedDeck from '../types/PersistedDeck';
 import { useEffect, useState } from 'react';
-import { DeckCard } from './DeckCard';
+import DeckCard from './DeckCard';
 import { Grid } from '@mui/material';
 import GameBoard from './GameBoard';
-import Http from '../service/Http';
+import { findAll } from '../service/DeckService';
 
-export function Game() {
+export default function Game() {
   const [decks, setDecks] = useState<PersistedDeck[]>();
   const [selectedDeck, setSelectedDeck] = useState<PersistedDeck>();
 
   useEffect(() => {
-    Http.get<PersistedDeck[]>('/decks').then((response) => setDecks(response.data));
+    findAll().then(setDecks);
   }, []);
 
   return selectedDeck ? (
