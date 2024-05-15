@@ -1,8 +1,20 @@
-import { render, screen, within } from '@testing-library/react';
+import { act, render, screen, within } from '@testing-library/react';
 import DeckEdit from './DeckEdit';
 import userEvent, { UserEvent } from '@testing-library/user-event';
 import Deck from '../types/Deck';
 import Card from '../types/Card';
+import { BatchItem, useItemFinishListener } from '@rpldy/uploady';
+import { afterEach } from 'vitest';
+
+const mockedUseItemFinishListener = vi.mocked(useItemFinishListener);
+
+vi.mock('@rpldy/uploady', async (importOriginal) => {
+  const original: object = await importOriginal();
+  return {
+    ...original,
+    useItemFinishListener: vi.fn(),
+  };
+});
 
 const input = (name: string) => screen.getByRole('textbox', { name });
 const nameInput = () => input('Name');
@@ -26,6 +38,9 @@ describe('Deck Edit', () => {
       cards: [],
     };
   });
+  afterEach(() => {
+    mockedUseItemFinishListener.mockClear();
+  });
   it('should have input for name', () => {
     render(<DeckEdit deck={deck} onConfirm={onConfirm} onCancel={onCancel} confirmText="Update" />);
 
@@ -35,6 +50,25 @@ describe('Deck Edit', () => {
     render(<DeckEdit deck={deck} onConfirm={onConfirm} onCancel={onCancel} confirmText="Update" />);
 
     expect(imageInput()).toHaveValue('http://imageurl');
+  });
+  it('should have button for image upload', () => {
+    render(<DeckEdit deck={deck} onConfirm={onConfirm} onCancel={onCancel} confirmText="Update" />);
+
+    expect(screen.getByRole('button', { name: 'Upload' })).toBeInTheDocument();
+  });
+  it('should update image on image upload', () => {
+    render(<DeckEdit deck={deck} onConfirm={onConfirm} onCancel={onCancel} confirmText="Update" />);
+
+    act(() =>
+      mockedUseItemFinishListener.mock.calls[0][0](
+        {
+          uploadResponse: { data: { url: 'http://uploadedimageurl' } },
+        } as BatchItem,
+        {},
+      ),
+    );
+
+    expect(imageInput()).toHaveValue('http://uploadedimageurl');
   });
   it('should call onCancel when cancel button is clicked', async () => {
     render(<DeckEdit deck={deck} onConfirm={onConfirm} onCancel={onCancel} confirmText="Update" />);
