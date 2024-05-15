@@ -8,6 +8,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import AddRoundedIcon from '@mui/icons-material/AddRounded';
 import EditCardDialog from './EditCardDialog';
 import DeckEditReducer from './DeckEditReducer';
+import ImageUploadButton from './ImageUploadButton';
 
 interface DeckEditProps {
   deck: Deck;
@@ -32,6 +33,7 @@ export default function DeckEdit({ deck, onConfirm, onCancel, confirmText }: Dec
           value={updatedDeck.imageUrl}
           onChange={(event) => dispatch({ type: 'UPDATE_DECK_IMAGE_URL', imageUrl: event.target.value })}
         />
+        <ImageUploadButton onItemFinish={(url: string) => dispatch({ type: 'UPDATE_DECK_IMAGE_URL', imageUrl: url })} />
         <List>
           {updatedDeck.attributes.map((attribute, index) => (
             <ListItem
