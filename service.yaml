@@ -25,7 +25,7 @@ spec:
           tcpSocket:
             port: 8080
       - name: top-trumps-api
-        image: douglasjohnson/top-trumps-api:latest
+        image: douglasjohnson/top-trumps-api:0.0.1
         env:
           - name: spring.data.mongodb.uri
             valueFrom:
