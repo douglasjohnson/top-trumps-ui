@@ -92,7 +92,7 @@ export default function GameBoard({ deck }: GameBoardProps) {
   };
 
   return (
-    <Grid container direction="row" justifyContent="space-evenly" alignItems="center" spacing={20}>
+    <Grid container direction="row" justifyContent="space-evenly" alignItems="center">
       <Grid item spacing={2}>
         <Typography variant="h2">Player 1</Typography>
         {cards1 && cards1.length > 0 ? (
@@ -106,21 +106,19 @@ export default function GameBoard({ deck }: GameBoardProps) {
         )}
       </Grid>
       <Grid item>
-        <>
-          {game.player1 && game.player2 && (
-            <>
-              <Typography>{winner()}</Typography>
-              <IconButton aria-label="Start" onClick={() => onNextRound()}>
-                <SportsKabaddiIcon sx={{ fontSize: 80 }} />
-              </IconButton>
-            </>
-          )}
-          {!game.player1 && !game.player2 && (
-            <IconButton aria-label="Start" onClick={() => onStart('player1')}>
+        {game.player1 && game.player2 && (
+          <>
+            <Typography>{winner()}</Typography>
+            <IconButton aria-label="Start" onClick={() => onNextRound()}>
               <SportsKabaddiIcon sx={{ fontSize: 80 }} />
             </IconButton>
-          )}
-        </>
+          </>
+        )}
+        {!game.player1 && !game.player2 && (
+          <IconButton aria-label="Start" onClick={() => onStart('player1')}>
+            <SportsKabaddiIcon sx={{ fontSize: 80 }} />
+          </IconButton>
+        )}
       </Grid>
       <Grid item spacing={2}>
         <Typography variant="h2">Player 2</Typography>

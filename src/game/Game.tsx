@@ -17,7 +17,7 @@ export default function Game() {
     <GameBoard deck={selectedDeck} />
   ) : (
     decks && (
-      <Grid container spacing={2}>
+      <Grid container spacing={2} justifyContent="space-evenly">
         {decks.map((deck) => (
           <Grid item key={deck.id}>
             <DeckCard deck={deck} onClick={() => setSelectedDeck(deck)} />

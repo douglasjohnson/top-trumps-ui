@@ -26,6 +26,7 @@ export default function DeckAdmin() {
   }, []);
 
   const editDeck = state.newDeck || state.editDeck;
+
   return editDeck ? (
     <DeckEdit
       deck={editDeck}
