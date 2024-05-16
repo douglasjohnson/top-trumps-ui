@@ -26,7 +26,7 @@ export default function CardDialog({ open, title, card, onClose, onConfirm, attr
     <Dialog open={open} onClose={onClose}>
       <DialogTitle>{title}</DialogTitle>
       <DialogContent>
-        <Stack spacing={2}>
+        <Stack spacing={2} paddingTop={1}>
           <TextField label="Name" value={updatedCard.name} onChange={(event) => setUpdatedCard({ ...updatedCard, name: event.target.value })} />
           <TextField
             label="Description"
