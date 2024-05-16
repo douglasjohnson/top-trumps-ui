@@ -1,16 +1,20 @@
 import ImageUploadButton from './ImageUploadButton';
-import { render, screen } from '@testing-library/react';
+import { act, render, screen } from '@testing-library/react';
 import userEvent, { UserEvent } from '@testing-library/user-event';
 import { afterEach, beforeEach } from 'vitest';
-import { BatchItem, useItemFinishListener } from '@rpldy/uploady';
+import { BatchItem, useItemFinalizeListener, useItemFinishListener, useItemStartListener } from '@rpldy/uploady';
 
+const mockedUseItemStartListener = vi.mocked(useItemStartListener);
 const mockedUseItemFinishListener = vi.mocked(useItemFinishListener);
+const mockedUseItemFinalizeListener = vi.mocked(useItemFinalizeListener);
 
 vi.mock('@rpldy/uploady', async (importOriginal) => {
   const original: object = await importOriginal();
   return {
     ...original,
+    useItemStartListener: vi.fn(),
     useItemFinishListener: vi.fn(),
+    useItemFinalizeListener: vi.fn(),
   };
 });
 
@@ -25,7 +29,9 @@ describe('Image Upload button', () => {
     render(<ImageUploadButton onItemFinish={onItemFinish} />);
   });
   afterEach(() => {
+    mockedUseItemStartListener.mockClear();
     mockedUseItemFinishListener.mockClear();
+    mockedUseItemFinalizeListener.mockClear();
   });
   it('should show button', () => {
     expect(screen.getByRole('button', { name: 'Upload' })).toBeInTheDocument();
@@ -61,5 +67,18 @@ describe('Image Upload button', () => {
     );
 
     expect(onItemFinish).toHaveBeenCalledWith('http://imageurl');
+  });
+  it('should enable button by default', async () => {
+    expect(screen.getByRole('button', { name: 'Upload' })).toBeEnabled();
+  });
+  it('should disable button when upload starts', async () => {
+    await act(() => mockedUseItemStartListener.mock.calls[0][0]({} as BatchItem, {}));
+
+    expect(screen.getByRole('button', { name: 'Upload' })).toBeDisabled();
+  });
+  it('should enable button when upload is finalized', async () => {
+    mockedUseItemFinalizeListener.mock.calls[0][0]({} as BatchItem, {});
+
+    expect(screen.getByRole('button', { name: 'Upload' })).toBeEnabled();
   });
 });

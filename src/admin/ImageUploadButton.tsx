@@ -1,14 +1,23 @@
-import Uploady, { BatchItem, useItemFinishListener } from '@rpldy/uploady';
-import UploadButton from '@rpldy/upload-button';
+import Uploady, { useItemFinalizeListener, useItemFinishListener, useItemStartListener } from '@rpldy/uploady';
+import { asUploadButton, UploadButtonProps } from '@rpldy/upload-button';
+import { forwardRef, useState } from 'react';
+import { LoadingButton } from '@mui/lab';
 
-interface UploadButtonWithHooksProps {
-  onItemFinish: (item: BatchItem) => void;
-}
+type CustomUploadButtonProps = UploadButtonProps & ImageUploadButtonProps;
 
-function UploadButtonWithHooks({ onItemFinish }: UploadButtonWithHooksProps) {
-  useItemFinishListener(onItemFinish);
-  return <UploadButton />;
-}
+const CustomUploadButton = asUploadButton(
+  forwardRef<HTMLButtonElement, CustomUploadButtonProps>(function CustomUploadButton({ onItemFinish, ...props }, ref) {
+    const [loading, setLoading] = useState(false);
+    useItemStartListener(() => setLoading(true));
+    useItemFinishListener((item) => onItemFinish(item.uploadResponse.data.url));
+    useItemFinalizeListener(() => setLoading(false));
+    return (
+      <LoadingButton loading={loading} {...props} ref={ref} variant="contained" color="secondary">
+        Upload
+      </LoadingButton>
+    );
+  }),
+);
 
 interface ImageUploadButtonProps {
   onItemFinish: (url: string) => void;
@@ -16,8 +25,8 @@ interface ImageUploadButtonProps {
 
 export default function ImageUploadButton({ onItemFinish }: ImageUploadButtonProps) {
   return (
-    <Uploady autoUpload destination={{ url: '/api/images' }} accept="image/*" multiple={false}>
-      <UploadButtonWithHooks onItemFinish={(item) => onItemFinish(item.uploadResponse.data.url)} />
+    <Uploady destination={{ url: '/api/images' }} accept="image/*" multiple={false}>
+      <CustomUploadButton extraProps={{ onItemFinish }} />
     </Uploady>
   );
 }
