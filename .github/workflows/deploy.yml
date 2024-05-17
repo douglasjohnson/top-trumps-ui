@@ -35,7 +35,7 @@ jobs:
       - run: sed -i -e "s/API_IMAGE_VERSION/$API_IMAGE_VERSION/g" -e "s/UI_IMAGE_VERSION/$UI_IMAGE_VERSION/g" service.yaml
         env:
           API_IMAGE_VERSION: 0.0.1
-          UI_IMAGE_VERSION: ${{  github.ref_name }}
+          UI_IMAGE_VERSION: ${{ github.ref_name }}
       - uses: google-github-actions/deploy-cloudrun@v2
         with:
           region: 'europe-west1'
