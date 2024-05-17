@@ -12,7 +12,7 @@ interface DeckGridProps {
 
 export default function DeckGrid({ decks, onDeckEdit, onDeckAdd, onDeckDelete }: DeckGridProps) {
   return (
-    <Grid container spacing={2} justifyContent="space-evenly">
+    <Grid container spacing={2} justifyContent="center" alignContent="center">
       {decks &&
         decks.map((deck) => (
           <Grid item key={deck.id}>

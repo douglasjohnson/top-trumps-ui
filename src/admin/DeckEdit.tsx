@@ -1,6 +1,6 @@
 import Deck from '../types/Deck';
 import { useReducer } from 'react';
-import { Button, Grid, IconButton, List, ListItem, ListItemButton, Stack, TextField } from '@mui/material';
+import { Button, Container, Grid, IconButton, List, ListItem, ListItemButton, Stack, TextField } from '@mui/material';
 import NewCard from './NewCard';
 import NewCardDialog from './NewCardDialog';
 import CardCard from './CardCard';
@@ -25,7 +25,7 @@ export default function DeckEdit({ deck, onConfirm, onCancel, confirmText }: Dec
   const editCard = state.editCard;
 
   return (
-    <div>
+    <Container>
       <Stack spacing={2}>
         <TextField label="Name" value={updatedDeck.name} onChange={(event) => dispatch({ type: 'UPDATE_DECK_NAME', name: event.target.value })} />
         <TextField
@@ -93,6 +93,6 @@ export default function DeckEdit({ deck, onConfirm, onCancel, confirmText }: Dec
         onClose={() => dispatch({ type: 'EDIT_CARD', card: undefined })}
         onConfirm={(card) => dispatch({ type: 'CARD_EDITED', card })}
       />
-    </div>
+    </Container>
   );
 }
