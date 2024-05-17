@@ -1,10 +1,9 @@
 name: Deploy
 
 on:
-  workflow_run:
-    workflows: [Test]
-    types: [completed]
-    branches: ['main']
+  push:
+    tags:
+      - '*.*.*'
 
 permissions:
   contents: read
@@ -18,7 +17,7 @@ jobs:
       - uses: docker/metadata-action@v5
         id: meta
         with:
-          images: europe-west1-docker.pkg.dev/spring-boot-open-api-mongodb/top-trumps-ui/top-trumps-ui
+          images: europe-west1-docker.pkg.dev/spring-boot-open-api-mongodb/top-trumps/top-trumps-ui
       - uses: docker/login-action@v3
         with:
           registry: europe-west1-docker.pkg.dev
@@ -28,10 +27,15 @@ jobs:
         with:
           context: .
           push: true
-          tags: europe-west1-docker.pkg.dev/spring-boot-open-api-mongodb/top-trumps-ui/top-trumps-ui:latest
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
       - uses: google-github-actions/auth@v2
         with:
           credentials_json: '${{ secrets.GOOGLE_CREDENTIALS }}'
+      - run: sed -e "s/API_IMAGE_VERSION/$API_IMAGE_VERSION/g" -e "s/UI_IMAGE_VERSION/$UI_IMAGE_VERSION/g" service.yaml
+        env:
+          API_IMAGE_VERSION: 0.0.1
+          UI_IMAGE_VERSION: ${{  github.ref_name }}
       - uses: google-github-actions/deploy-cloudrun@v2
         with:
           region: 'europe-west1'

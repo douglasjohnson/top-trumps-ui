@@ -12,7 +12,7 @@ spec:
     spec:
       containers:
       - name: top-trumps-ui
-        image: europe-west1-docker.pkg.dev/spring-boot-open-api-mongodb/top-trumps-ui/top-trumps-ui:latest
+        image: europe-west1-docker.pkg.dev/spring-boot-open-api-mongodb/top-trumps/top-trumps-ui:UI_IMAGE_VERSION
         env:
         - name: API_URL
           value: http://localhost:5000
@@ -25,7 +25,7 @@ spec:
           tcpSocket:
             port: 8080
       - name: top-trumps-api
-        image: europe-west1-docker.pkg.dev/spring-boot-open-api-mongodb/top-trumps-api/top-trumps-api:latest
+        image: europe-west1-docker.pkg.dev/spring-boot-open-api-mongodb/top-trumps/top-trumps-api:API_IMAGE_VERSION
         env:
           - name: spring.data.mongodb.uri
             valueFrom:
