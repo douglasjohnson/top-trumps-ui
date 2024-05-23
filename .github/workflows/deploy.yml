@@ -34,7 +34,7 @@ jobs:
           credentials_json: '${{ secrets.GOOGLE_CREDENTIALS }}'
       - run: sed -i -e "s/API_IMAGE_VERSION/$API_IMAGE_VERSION/g" -e "s/UI_IMAGE_VERSION/$UI_IMAGE_VERSION/g" service.yaml
         env:
-          API_IMAGE_VERSION: 0.0.1
+          API_IMAGE_VERSION: 0.0.2
           UI_IMAGE_VERSION: ${{ github.ref_name }}
       - uses: google-github-actions/deploy-cloudrun@v2
         with:
