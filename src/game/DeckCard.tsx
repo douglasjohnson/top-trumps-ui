@@ -3,10 +3,10 @@ import { Card, CardActionArea, CardHeader, CardMedia } from '@mui/material';
 
 interface DeckCardProps {
   deck: Deck;
-  onClick: () => void;
+  onClick?: () => void;
 }
 
-export default function DeckCard({ deck, onClick }: DeckCardProps) {
+export default function DeckCard({ deck, onClick = () => {} }: DeckCardProps) {
   return (
     <Card
       raised
