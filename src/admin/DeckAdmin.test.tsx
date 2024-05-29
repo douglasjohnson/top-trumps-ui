@@ -34,8 +34,7 @@ describe('Deck Admin', () => {
     expect(findAll).toHaveBeenCalled();
   });
   it('should display decks on load success', async () => {
-    const decks: PersistedDeck[] = [{ id: '1', name: 'Deck 1', imageUrl: '', attributes: [], cards: [] }];
-    mockedFindAll.mockResolvedValueOnce(decks);
+    mockedFindAll.mockResolvedValueOnce([{ id: '1', name: 'Deck 1', imageUrl: '', attributes: [], cards: [] }]);
 
     render(
       <QueryClientProvider client={queryClient}>
