@@ -133,7 +133,7 @@ describe('Game Board', () => {
     it('should indicate player 1 wins when attribute selected is higher', async () => {
       await user.click(screen.getByRole('button', { name: 'Start' }));
 
-      await user.click(screen.getByText('B - 6'));
+      await user.click(screen.getByText('B - 4'));
 
       expect(screen.getByText('Winner: Player 1 - Card 1')).toBeInTheDocument();
     });
@@ -153,7 +153,7 @@ describe('Game Board', () => {
     });
     it('should clear status when next rounds starts ', async () => {
       await user.click(screen.getByRole('button', { name: 'Start' }));
-      await user.click(screen.getByText('B - 6'));
+      await user.click(screen.getByText('B - 4'));
 
       await user.click(screen.getByRole('button', { name: 'Start' }));
 
@@ -162,7 +162,7 @@ describe('Game Board', () => {
     });
     it('should reveal player 1 card when next rounds starts after player 1 win', async () => {
       await user.click(screen.getByRole('button', { name: 'Start' }));
-      await user.click(screen.getByText('B - 6'));
+      await user.click(screen.getByText('B - 4'));
 
       await user.click(screen.getByRole('button', { name: 'Start' }));
 
@@ -170,7 +170,7 @@ describe('Game Board', () => {
     });
     it('should hide player 2 card when next rounds starts after player 1 win', async () => {
       await user.click(screen.getByRole('button', { name: 'Start' }));
-      await user.click(screen.getByText('B - 6'));
+      await user.click(screen.getByText('B - 4'));
 
       await user.click(screen.getByRole('button', { name: 'Start' }));
 
