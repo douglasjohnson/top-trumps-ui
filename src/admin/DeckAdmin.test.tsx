@@ -3,6 +3,8 @@ import DeckAdmin from './DeckAdmin';
 import { render, screen, within } from '@testing-library/react';
 import PersistedDeck from '../types/PersistedDeck';
 import userEvent, { UserEvent } from '@testing-library/user-event';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { Suspense } from 'react';
 
 vitest.mock('../service/DeckService');
 
@@ -13,13 +15,21 @@ const deleteConfirmationDialog = () => screen.getByRole('dialog', { name: 'Delet
 
 describe('Deck Admin', () => {
   let user: UserEvent;
+  let queryClient: QueryClient;
   beforeEach(() => {
     user = userEvent.setup();
+    queryClient = new QueryClient();
   });
   it('should load decks', () => {
     mockedFindAll.mockImplementation(() => new Promise(vi.fn()));
 
-    render(<DeckAdmin />);
+    render(
+      <QueryClientProvider client={queryClient}>
+        <Suspense>
+          <DeckAdmin />
+        </Suspense>
+      </QueryClientProvider>,
+    );
 
     expect(findAll).toHaveBeenCalled();
   });
@@ -27,7 +37,13 @@ describe('Deck Admin', () => {
     const decks: PersistedDeck[] = [{ id: '1', name: 'Deck 1', imageUrl: '', attributes: [], cards: [] }];
     mockedFindAll.mockResolvedValueOnce(decks);
 
-    render(<DeckAdmin />);
+    render(
+      <QueryClientProvider client={queryClient}>
+        <Suspense>
+          <DeckAdmin />
+        </Suspense>
+      </QueryClientProvider>,
+    );
 
     expect(await screen.findByText('Deck 1')).toBeInTheDocument();
   });
@@ -39,7 +55,13 @@ describe('Deck Admin', () => {
       const decks: PersistedDeck[] = [deck, { id: '2', name: 'Deck 2', imageUrl: '', attributes: [], cards: [] }];
       mockedFindAll.mockResolvedValueOnce(decks);
       mockedUpdate.mockImplementation(() => new Promise(vi.fn()));
-      render(<DeckAdmin />);
+      render(
+        <QueryClientProvider client={queryClient}>
+          <Suspense>
+            <DeckAdmin />
+          </Suspense>
+        </QueryClientProvider>,
+      );
       await screen.findByText('Deck 1');
     });
     it('should show edit deck on deck click', async () => {
@@ -84,7 +106,13 @@ describe('Deck Admin', () => {
       const decks: PersistedDeck[] = [{ id: '1', name: 'Deck 1', imageUrl: '', attributes: [], cards: [] }];
       mockedFindAll.mockResolvedValueOnce(decks);
       mockedSave.mockImplementation(() => new Promise(vi.fn()));
-      render(<DeckAdmin />);
+      render(
+        <QueryClientProvider client={queryClient}>
+          <Suspense>
+            <DeckAdmin />
+          </Suspense>
+        </QueryClientProvider>,
+      );
       await screen.findByText('Deck 1');
     });
     it('should show new deck on new click', async () => {
@@ -125,7 +153,13 @@ describe('Deck Admin', () => {
       mockedDelete.mockImplementation(() => new Promise(vi.fn()));
       deck = { id: '1', name: 'Deck 1', imageUrl: '', attributes: [], cards: [] };
       mockedFindAll.mockResolvedValueOnce([deck]);
-      render(<DeckAdmin />);
+      render(
+        <QueryClientProvider client={queryClient}>
+          <Suspense>
+            <DeckAdmin />
+          </Suspense>
+        </QueryClientProvider>,
+      );
       await screen.findByText('Deck 1');
     });
     it('should have delete deck button', () => {
