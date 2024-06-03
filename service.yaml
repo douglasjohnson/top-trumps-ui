@@ -32,6 +32,16 @@ spec:
               secretKeyRef:
                 key: latest
                 name: spring-data-mongodb-uri
+          - name: GOOGLE_CLIENT_ID
+            valueFrom:
+              secretKeyRef:
+                key: latest
+                name: google-client-id
+          - name: GOOGLE_CLIENT_SECRET
+            valueFrom:
+              secretKeyRef:
+                key: latest
+                name: google-client-secret
           - name: PORT
             value: '5000'
         startupProbe:

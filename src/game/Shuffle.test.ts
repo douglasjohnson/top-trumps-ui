@@ -1,5 +1,4 @@
 import Shuffle from './Shuffle';
-import { expect } from 'vitest';
 
 describe('Shuffle', () => {
   it('should return all cards', () => {
