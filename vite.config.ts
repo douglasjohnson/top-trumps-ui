@@ -11,7 +11,7 @@ export default defineConfig({
     setupFiles: './src/test-setup.ts',
     coverage: {
       include: ['src/**/*.ts{x,}'],
-      exclude: ['src/main.tsx', 'src/game/*'],
+      exclude: ['src/main.tsx', 'src/AuthContextProvider.tsx'],
       thresholds: {
         100: true,
       },

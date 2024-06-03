@@ -1,31 +1,18 @@
 import PersistedDeck from '../types/PersistedDeck';
 import { useEffect, useState } from 'react';
 import Card from '../types/Card';
-import DeckCard from './DeckCard';
 import { Grid, IconButton, Typography } from '@mui/material';
 import SportsKabaddiIcon from '@mui/icons-material/SportsKabaddi';
-import CardCard from './CardCard';
 import Attribute from '../types/Attribute';
+import Shuffle from './Shuffle';
+import Hand from './Hand';
 
 interface GameBoardProps {
   deck: PersistedDeck;
+  shuffle?: (cards: Card[]) => Card[];
 }
 
-const shuffle = (array: Card[]) => {
-  let currentIndex = array.length;
-
-  // While there remain elements to shuffle...
-  while (currentIndex != 0) {
-    // Pick a remaining element...
-    const randomIndex = Math.floor(Math.random() * currentIndex);
-    currentIndex--;
-
-    // And swap it with the current element.
-    [array[currentIndex], array[randomIndex]] = [array[randomIndex], array[currentIndex]];
-  }
-};
-
-export default function GameBoard({ deck }: GameBoardProps) {
+export default function GameBoard({ deck, shuffle = Shuffle }: GameBoardProps) {
   const [cards1, setCards1] = useState<Card[]>();
   const [cards2, setCards2] = useState<Card[]>();
   const [game, setGame] = useState<{ player1: boolean; player2: boolean; winner: string | undefined }>({
@@ -39,7 +26,7 @@ export default function GameBoard({ deck }: GameBoardProps) {
     shuffle(shuffledCards);
     setCards1(shuffledCards.filter((_card, index) => index % 2 === 0));
     setCards2(shuffledCards.filter((_card, index) => index % 2 === 1));
-  }, [deck]);
+  }, [deck, shuffle]);
 
   const onStart = (player: string) => {
     setGame({ ...game, [player]: true });
@@ -93,17 +80,8 @@ export default function GameBoard({ deck }: GameBoardProps) {
 
   return (
     <Grid container direction="row" justifyContent="space-evenly" alignItems="center">
-      <Grid item spacing={2}>
-        <Typography variant="h2">Player 1</Typography>
-        {cards1 && cards1.length > 0 ? (
-          game.player1 ? (
-            <CardCard card={cards1[0]} onClick={onAttributeClick} />
-          ) : (
-            <DeckCard deck={deck} onClick={() => {}} />
-          )
-        ) : (
-          <div>Out of cards</div>
-        )}
+      <Grid item>
+        <Hand name="Player 1" deck={deck} cards={cards1} onAttributeClick={onAttributeClick} player={game.player1} />
       </Grid>
       <Grid item>
         {game.player1 && game.player2 && (
@@ -120,17 +98,8 @@ export default function GameBoard({ deck }: GameBoardProps) {
           </IconButton>
         )}
       </Grid>
-      <Grid item spacing={2}>
-        <Typography variant="h2">Player 2</Typography>
-        {cards2 && cards2.length > 0 ? (
-          game.player2 ? (
-            <CardCard card={cards2[0]} onClick={onAttributeClick} />
-          ) : (
-            <DeckCard deck={deck} onClick={() => {}} />
-          )
-        ) : (
-          <div>Out of cards</div>
-        )}
+      <Grid item>
+        <Hand name="Player 2" deck={deck} cards={cards2} onAttributeClick={onAttributeClick} player={game.player2} />
       </Grid>
     </Grid>
   );
