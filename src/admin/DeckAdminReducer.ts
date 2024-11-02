@@ -12,9 +12,9 @@ type Action =
   | { type: 'EDIT_DECK'; deck: PersistedDeck }
   | { type: 'EDIT_DECK_CANCELLED' }
   | { type: 'NEW_DECK' }
-  | { type: 'DECK_CREATED'; deck: PersistedDeck }
-  | { type: 'DECK_UPDATED'; deck: PersistedDeck }
-  | { type: 'DECK_DELETED'; deck: PersistedDeck };
+  | { type: 'DECK_CREATED' }
+  | { type: 'DECK_UPDATED' }
+  | { type: 'DECK_DELETED' };
 
 const DeckAdminReducer = (state: State, action: Action) => {
   const newState = { ...state };

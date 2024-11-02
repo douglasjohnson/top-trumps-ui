@@ -4,50 +4,47 @@ import DeckEdit from './DeckEdit';
 import DeckGrid from './DeckGrid';
 import DeleteDeckConfirmationDialog from './DeleteDeckConfirmationDialog';
 import DeckAdminReducer from './DeckAdminReducer';
-import { deleteDeck, findAll, save, update } from '../service/DeckService';
-import { useMutation, useQueryClient, useSuspenseQuery } from '@tanstack/react-query';
+import { deleteDeck, save, update } from '../service/DeckService';
+import useDeck from '../hooks/useDeck';
+import useSWRMutation from 'swr/mutation';
+import PersistedDeck from '../types/PersistedDeck';
 
 export default function DeckAdmin() {
   const [state, dispatch] = useReducer(DeckAdminReducer, {});
-  const queryClient = useQueryClient();
-  const { data } = useSuspenseQuery({ queryKey: ['decks'], queryFn: findAll });
+  const { decks } = useDeck();
 
-  const deckUpdateMutation = useMutation({
-    mutationFn: update,
-    onSuccess: (deck) => {
-      dispatch({ type: 'DECK_UPDATED', deck });
-      queryClient.setQueryData(
-        ['decks'],
-        data.map((existingDeck) => (deck.id === existingDeck.id ? deck : existingDeck)),
-      );
-    },
-  });
-  const deckSaveMutation = useMutation({
-    mutationFn: save,
-    onSuccess: (deck) => {
-      dispatch({ type: 'DECK_CREATED', deck });
-      queryClient.setQueryData(['decks'], [...data, deck]);
-    },
-  });
-  const deckDeleteMutation = useMutation({
-    mutationFn: deleteDeck,
-    onSuccess: (deck) => {
-      dispatch({ type: 'DECK_DELETED', deck });
-      queryClient.setQueryData(
-        ['decks'],
-        data.filter((existingDeck) => existingDeck !== deck),
-      );
-    },
-  });
+  const { trigger: deckUpdateMutation } = useSWRMutation('decks', (_key, { arg }: { arg: PersistedDeck }) => update(arg));
+  const { trigger: deckSaveMutation } = useSWRMutation('decks', (_key, { arg }: { arg: Deck }) => save(arg));
+  const { trigger: deckDeleteMutation } = useSWRMutation('decks', (_key, { arg }: { arg: PersistedDeck }) => deleteDeck(arg));
 
-  const onUpdateConfirm = (updatedDeck: Deck) => {
+  const onUpdateConfirm = async (updatedDeck: Deck) => {
     if (state.editDeck) {
-      deckUpdateMutation.mutate({ ...updatedDeck, id: state.editDeck.id });
+      const deckToUpdate = updatedDeck as PersistedDeck;
+      dispatch({ type: 'DECK_UPDATED' });
+      await deckUpdateMutation(
+        { ...updatedDeck, id: state.editDeck.id },
+        {
+          optimisticData: decks.map((existingDeck) => (deckToUpdate.id === existingDeck.id ? deckToUpdate : existingDeck)),
+          revalidate: true,
+        },
+      );
     } else {
-      deckSaveMutation.mutate(updatedDeck);
+      dispatch({ type: 'DECK_CREATED' });
+      await deckSaveMutation(updatedDeck, {
+        optimisticData: [...decks, { ...updatedDeck, id: '' }],
+        revalidate: true,
+      });
     }
   };
-  const onDeleteConfirm = () => state.deleteDeck && deckDeleteMutation.mutate(state.deleteDeck);
+  const onDeleteConfirm = async () => {
+    if (state.deleteDeck) {
+      dispatch({ type: 'DECK_DELETED' });
+      await deckDeleteMutation(state.deleteDeck, {
+        optimisticData: () => decks.filter((existingDeck) => existingDeck !== state.deleteDeck),
+        revalidate: true,
+      });
+    }
+  };
 
   const editDeck = state.newDeck || state.editDeck;
 
@@ -61,7 +58,7 @@ export default function DeckAdmin() {
   ) : (
     <>
       <DeckGrid
-        decks={data}
+        decks={decks}
         onDeckEdit={(value) => dispatch({ type: 'EDIT_DECK', deck: value })}
         onDeckAdd={() => dispatch({ type: 'NEW_DECK' })}
         onDeckDelete={(value) => dispatch({ type: 'DELETE_DECK', deck: value })}

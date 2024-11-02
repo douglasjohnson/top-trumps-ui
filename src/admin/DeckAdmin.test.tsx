@@ -3,8 +3,8 @@ import DeckAdmin from './DeckAdmin';
 import { render, screen, within } from '@testing-library/react';
 import PersistedDeck from '../types/PersistedDeck';
 import userEvent, { UserEvent } from '@testing-library/user-event';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { Suspense } from 'react';
+import { ReactNode, Suspense } from 'react';
+import { SWRConfig } from 'swr';
 
 vitest.mock('../service/DeckService');
 
@@ -13,36 +13,31 @@ const mockedFindAll = vitest.mocked(findAll);
 const deckCard = (name: string) => screen.getByText(name).closest('.MuiCard-root') as HTMLElement;
 const deleteConfirmationDialog = () => screen.getByRole('dialog', { name: 'Delete deck' });
 
+const Wrapper = ({ children }: { children: ReactNode }) => (
+  <SWRConfig value={{ provider: () => new Map() }}>
+    <Suspense>{children}</Suspense>
+  </SWRConfig>
+);
+
 describe('Deck Admin', () => {
   let user: UserEvent;
-  let queryClient: QueryClient;
   beforeEach(() => {
     user = userEvent.setup();
-    queryClient = new QueryClient();
+  });
+  afterEach(() => {
+    vitest.resetAllMocks();
   });
   it('should load decks', () => {
     mockedFindAll.mockImplementation(() => new Promise(vi.fn()));
 
-    render(
-      <QueryClientProvider client={queryClient}>
-        <Suspense>
-          <DeckAdmin />
-        </Suspense>
-      </QueryClientProvider>,
-    );
+    render(<DeckAdmin />, { wrapper: Wrapper });
 
     expect(findAll).toHaveBeenCalled();
   });
   it('should display decks on load success', async () => {
     mockedFindAll.mockResolvedValueOnce([{ id: '1', name: 'Deck 1', imageUrl: '', attributes: [], cards: [] }]);
 
-    render(
-      <QueryClientProvider client={queryClient}>
-        <Suspense>
-          <DeckAdmin />
-        </Suspense>
-      </QueryClientProvider>,
-    );
+    render(<DeckAdmin />, { wrapper: Wrapper });
 
     expect(await screen.findByText('Deck 1')).toBeInTheDocument();
   });
@@ -54,13 +49,7 @@ describe('Deck Admin', () => {
       const decks: PersistedDeck[] = [deck, { id: '2', name: 'Deck 2', imageUrl: '', attributes: [], cards: [] }];
       mockedFindAll.mockResolvedValueOnce(decks);
       mockedUpdate.mockImplementation(() => new Promise(vi.fn()));
-      render(
-        <QueryClientProvider client={queryClient}>
-          <Suspense>
-            <DeckAdmin />
-          </Suspense>
-        </QueryClientProvider>,
-      );
+      render(<DeckAdmin />, { wrapper: Wrapper });
       await screen.findByText('Deck 1');
     });
     it('should show edit deck on deck click', async () => {
@@ -105,13 +94,7 @@ describe('Deck Admin', () => {
       const decks: PersistedDeck[] = [{ id: '1', name: 'Deck 1', imageUrl: '', attributes: [], cards: [] }];
       mockedFindAll.mockResolvedValueOnce(decks);
       mockedSave.mockImplementation(() => new Promise(vi.fn()));
-      render(
-        <QueryClientProvider client={queryClient}>
-          <Suspense>
-            <DeckAdmin />
-          </Suspense>
-        </QueryClientProvider>,
-      );
+      render(<DeckAdmin />, { wrapper: Wrapper });
       await screen.findByText('Deck 1');
     });
     it('should show new deck on new click', async () => {
@@ -152,13 +135,7 @@ describe('Deck Admin', () => {
       mockedDelete.mockImplementation(() => new Promise(vi.fn()));
       deck = { id: '1', name: 'Deck 1', imageUrl: '', attributes: [], cards: [] };
       mockedFindAll.mockResolvedValueOnce([deck]);
-      render(
-        <QueryClientProvider client={queryClient}>
-          <Suspense>
-            <DeckAdmin />
-          </Suspense>
-        </QueryClientProvider>,
-      );
+      render(<DeckAdmin />, { wrapper: Wrapper });
       await screen.findByText('Deck 1');
     });
     it('should have delete deck button', () => {

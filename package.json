@@ -23,12 +23,12 @@
     "@react-oauth/google": "^0.12.1",
     "@rpldy/upload-button": "^1.8.0",
     "@rpldy/uploady": "^1.8.0",
-    "@tanstack/react-query": "^5.40.0",
-    "axios": "^1.6.8",
+    "axios": "^1.7.4",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-image-file-resizer": "^0.4.8",
-    "react-router-dom": "^6.23.0"
+    "react-router-dom": "^6.23.0",
+    "swr": "^2.2.5"
   },
   "devDependencies": {
     "@testing-library/jest-dom": "^6.4.2",
@@ -50,7 +50,7 @@
     "jsdom": "^24.0.0",
     "prettier": "^3.2.5",
     "typescript": "^5.2.2",
-    "vite": "^5.2.0",
+    "vite": "^5.4.10",
     "vitest": "^1.5.2"
   }
 }

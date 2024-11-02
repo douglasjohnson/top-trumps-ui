@@ -3,9 +3,10 @@ import App from './App';
 import userEvent, { UserEvent } from '@testing-library/user-event';
 import { findAll } from './service/DeckService';
 import { MemoryRouter } from 'react-router-dom';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { GoogleOAuthProvider } from '@react-oauth/google';
 import { afterEach, beforeEach } from 'vitest';
+import { ReactNode } from 'react';
+import { SWRConfig } from 'swr';
 
 const mocks = vi.hoisted(() => {
   return {
@@ -27,24 +28,18 @@ const mockedFindAll = vi.mocked(findAll);
 const navigation = () => screen.getByRole('navigation');
 const main = () => screen.getByRole('main');
 
-function AppWrapper({ queryClient }: { queryClient: QueryClient }) {
-  return (
-    <MemoryRouter>
-      <QueryClientProvider client={queryClient}>
-        <GoogleOAuthProvider clientId={''}>
-          <App />
-        </GoogleOAuthProvider>
-      </QueryClientProvider>
-    </MemoryRouter>
-  );
-}
+const Wrapper = ({ children }: { children: ReactNode }) => (
+  <MemoryRouter>
+    <GoogleOAuthProvider clientId={''}>
+      <SWRConfig value={{ provider: () => new Map() }}>{children}</SWRConfig>
+    </GoogleOAuthProvider>
+  </MemoryRouter>
+);
 
 describe('App', () => {
   let user: UserEvent;
-  let queryClient: QueryClient;
   beforeEach(() => {
     user = userEvent.setup();
-    queryClient = new QueryClient();
     mockedFindAll.mockResolvedValue([{ id: '1', name: 'Deck 1', imageUrl: '', attributes: [], cards: [] }]);
   });
   afterEach(() => {
@@ -52,7 +47,7 @@ describe('App', () => {
   });
   describe('not authenticated', () => {
     beforeEach(() => {
-      render(<AppWrapper queryClient={queryClient} />);
+      render(<App />, { wrapper: Wrapper });
     });
     it('should not have home button', () => {
       expect(screen.queryByRole('button', { name: 'Home' })).not.toBeInTheDocument();
@@ -66,7 +61,7 @@ describe('App', () => {
   });
   describe('authenticated', () => {
     beforeEach(async () => {
-      render(<AppWrapper queryClient={queryClient} />);
+      render(<App />, { wrapper: Wrapper });
       await act(async () => {
         mocks.GoogleLogin.mock.calls[0][0].onSuccess({});
       });
