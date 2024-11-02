@@ -14,10 +14,10 @@ describe('Http', () => {
     localStorage.clear();
   });
   it('should add authentication header from token in local storage', () => {
-    localStorage.setItem('token', 'token-value');
+    localStorage.setItem('token', 'SampleToken');
     const config = fulfilled(initialConfig);
 
-    expect(config).toEqual({ headers: { Authorization: 'Bearer token-value' } });
+    expect(config).toEqual({ headers: { Authorization: 'Bearer SampleToken' } });
   });
   it('should not add authentication header when token not available', () => {
     const config = fulfilled(initialConfig);
