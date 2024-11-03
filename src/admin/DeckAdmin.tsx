@@ -1,48 +1,42 @@
-import { useReducer } from 'react';
+import { useReducer, useState } from 'react';
 import Deck from '../types/Deck';
 import DeckEdit from './DeckEdit';
 import DeckGrid from './DeckGrid';
 import DeleteDeckConfirmationDialog from './DeleteDeckConfirmationDialog';
 import DeckAdminReducer from './DeckAdminReducer';
-import { deleteDeck, save, update } from '../service/DeckService';
 import useDeck from '../hooks/useDeck';
-import useSWRMutation from 'swr/mutation';
-import PersistedDeck from '../types/PersistedDeck';
+import { Snackbar } from '@mui/material';
 
 export default function DeckAdmin() {
   const [state, dispatch] = useReducer(DeckAdminReducer, {});
-  const { decks } = useDeck();
-
-  const { trigger: deckUpdateMutation } = useSWRMutation('decks', (_key, { arg }: { arg: PersistedDeck }) => update(arg));
-  const { trigger: deckSaveMutation } = useSWRMutation('decks', (_key, { arg }: { arg: Deck }) => save(arg));
-  const { trigger: deckDeleteMutation } = useSWRMutation('decks', (_key, { arg }: { arg: PersistedDeck }) => deleteDeck(arg));
+  const { decks, updateDeck, saveDeck, deleteDeck } = useDeck();
+  const [error, setError] = useState<string>();
 
   const onUpdateConfirm = async (updatedDeck: Deck) => {
     if (state.editDeck) {
-      const deckToUpdate = updatedDeck as PersistedDeck;
       dispatch({ type: 'DECK_UPDATED' });
-      await deckUpdateMutation(
-        { ...updatedDeck, id: state.editDeck.id },
-        {
-          optimisticData: decks.map((existingDeck) => (deckToUpdate.id === existingDeck.id ? deckToUpdate : existingDeck)),
-          revalidate: true,
-        },
-      );
+      try {
+        await updateDeck({ ...updatedDeck, id: state.editDeck.id });
+      } catch {
+        setError('Failed to update deck');
+      }
     } else {
       dispatch({ type: 'DECK_CREATED' });
-      await deckSaveMutation(updatedDeck, {
-        optimisticData: [...decks, { ...updatedDeck, id: '' }],
-        revalidate: true,
-      });
+      try {
+        await saveDeck(updatedDeck);
+      } catch {
+        setError('Failed to save deck');
+      }
     }
   };
   const onDeleteConfirm = async () => {
     if (state.deleteDeck) {
       dispatch({ type: 'DECK_DELETED' });
-      await deckDeleteMutation(state.deleteDeck, {
-        optimisticData: () => decks.filter((existingDeck) => existingDeck !== state.deleteDeck),
-        revalidate: true,
-      });
+      try {
+        await deleteDeck(state.deleteDeck);
+      } catch {
+        setError('Failed to delete deck');
+      }
     }
   };
 
@@ -64,6 +58,13 @@ export default function DeckAdmin() {
         onDeckDelete={(value) => dispatch({ type: 'DELETE_DECK', deck: value })}
       />
       <DeleteDeckConfirmationDialog deck={state.deleteDeck} onConfirm={onDeleteConfirm} onClose={() => dispatch({ type: 'DELETE_DECK_CANCELLED' })} />
+      <Snackbar
+        open={!!error}
+        onClose={() => setError(undefined)}
+        message={error}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+        autoHideDuration={2000}
+      />
     </>
   );
 }
