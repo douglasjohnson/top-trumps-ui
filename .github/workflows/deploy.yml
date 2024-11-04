@@ -23,7 +23,7 @@ jobs:
           registry: europe-west1-docker.pkg.dev
           username: _json_key
           password: ${{ secrets.GOOGLE_CREDENTIALS }}
-      - uses: docker/build-push-action@v5
+      - uses: docker/build-push-action@v6
         with:
           context: .
           push: true
