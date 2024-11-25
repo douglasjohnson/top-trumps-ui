@@ -25,7 +25,11 @@ interface ImageUploadButtonProps {
 
 export default function ImageUploadButton({ onItemFinish }: ImageUploadButtonProps) {
   return (
-    <Uploady destination={{ url: '/api/images' }} accept="image/*" multiple={false}>
+    <Uploady
+      destination={{ url: '/api/images', headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } }}
+      accept="image/*"
+      multiple={false}
+    >
       <CustomUploadButton extraProps={{ onItemFinish }} />
     </Uploady>
   );
