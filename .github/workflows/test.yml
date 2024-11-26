@@ -25,5 +25,5 @@ jobs:
       - id: test
         run: npm run coverage
       - uses: davelosert/vitest-coverage-report-action@v2
-        if: steps.test.outcome !== 'skipped'
+        if: steps.test.outcome != 'skipped'
       - run: npm run build
