@@ -1,4 +1,4 @@
-import { defineConfig } from 'vitest/config';
+import { coverageConfigDefaults, defineConfig } from 'vitest/config';
 import react from '@vitejs/plugin-react';
 
 // https://vitejs.dev/config/
@@ -11,7 +11,7 @@ export default defineConfig({
     setupFiles: './src/test-setup.ts',
     coverage: {
       include: ['src/**/*.ts{x,}'],
-      exclude: ['src/main.tsx', 'src/AuthContextProvider.tsx'],
+      exclude: ['src/main.tsx', 'src/AuthContextProvider.tsx', ...coverageConfigDefaults.exclude],
       thresholds: {
         100: true,
       },
