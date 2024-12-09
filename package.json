@@ -19,7 +19,7 @@
     "@emotion/styled": "^11.13.5",
     "@mui/icons-material": "^5.15.16",
     "@mui/lab": "^5.0.0-alpha.173",
-    "@mui/material": "^5.16.7",
+    "@mui/material": "^5.16.9",
     "@react-oauth/google": "^0.12.1",
     "@rpldy/upload-button": "^1.8.3",
     "@rpldy/uploady": "^1.8.3",
