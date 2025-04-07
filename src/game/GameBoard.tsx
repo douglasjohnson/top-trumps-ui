@@ -22,8 +22,7 @@ export default function GameBoard({ deck, shuffle = Shuffle }: GameBoardProps) {
   });
 
   useEffect(() => {
-    const shuffledCards = [...deck.cards];
-    shuffle(shuffledCards);
+    const shuffledCards = shuffle([...deck.cards]);
     setCards1(shuffledCards.filter((_card, index) => index % 2 === 0));
     setCards2(shuffledCards.filter((_card, index) => index % 2 === 1));
   }, [deck, shuffle]);

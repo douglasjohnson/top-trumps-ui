@@ -105,9 +105,9 @@ describe('Game Board', () => {
           { name: 'B', units: 'kg' },
           { name: 'C', units: '' },
         ],
-        cards,
+        cards: [...cards].reverse(),
       };
-      render(<GameBoard deck={deck} shuffle={(cards) => cards} />);
+      render(<GameBoard deck={deck} shuffle={(cards) => [...cards].reverse()} />);
     });
     it('should reveal player 1 top card when game starts', async () => {
       await user.click(screen.getByRole('button', { name: 'Start' }));
