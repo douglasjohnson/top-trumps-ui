@@ -13,7 +13,7 @@ export default function CardCard({ card, onClick }: CardCardProps) {
       raised
       sx={{
         width: 200,
-        minHeight: 'fit-content'
+        minHeight: 'fit-content',
       }}
     >
       <CardHeader
